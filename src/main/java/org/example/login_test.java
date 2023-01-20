@@ -11,13 +11,18 @@ import org.testng.Assert;
 import org.testng.IResultMap;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class login_test {
     public static String baseurl = "https://petstore.swagger.io/v2";
 
-    @Test
+
     public void test() {
-        Users request=new Users();
+        Users request = new Users();
 
         request.setEmail("juu@gmail.com");
         request.setId(1331);
@@ -42,7 +47,7 @@ public class login_test {
         RestAssured.baseURI = "https://petstore.swagger.io/v2";
         RequestSpecification httpRequest = RestAssured.given();
         httpRequest.body(request);
-        httpRequest.header("Content-Type","application/json");
+        httpRequest.header("Content-Type", "application/json");
         Response response = httpRequest.post("/user");
 
         System.out.println(response.getStatusCode());
@@ -50,7 +55,25 @@ public class login_test {
         System.out.println(x.getString("message"));
         UsersResponse validateResponse = response.as(UsersResponse.class);
 
-        Assert.assertEquals(validateResponse.getMessage(),String.valueOf(request.getId()),"id mismatch");
+        Assert.assertEquals(validateResponse.getMessage(), String.valueOf(request.getId()), "id mismatch");
         System.out.println("all ok");
     }
+
+    @Test
+    public void test2() {
+        Response response = RestAssured.get("https://run.mocky.io/v3/9eb34956-8f80-42b8-b90c-4a18feaffe6c");
+        if (response instanceof Map) {
+            Map Responseaslist = response.as(Map.class);
+            System.out.println(Responseaslist.size());
+            System.out.println(Responseaslist);
+            if (Responseaslist.get("status").equals("success")) {
+                ArrayList<LinkedHashMap<Object, Object>> x = (ArrayList<LinkedHashMap<Object, Object>>) Responseaslist.get("gear");
+                Assert.assertEquals(x.get(0).get("year"), "2005", "year miss matched");
+                Assert.assertEquals(x.get(1).get("year"), "1983", "year miss matched");
+            }
+        } else if (response instanceof List) {
+            List Responseaslist = response.as(List.class);
+        }
+    }
+
 }
